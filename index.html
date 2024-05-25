@@ -46,12 +46,18 @@
         #clickMeBtn:hover:enabled {
             background-color: darkgreen;
         }
+        label {
+            font-size: 18px;
+            margin-bottom: 10px;
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Welcome!</h1>
         <p>Please enter your Discord username to proceed:</p>
+        <label for="discordUsername">Enter your Discord username:</label>
         <input type="text" id="discordUsername" placeholder="Discord Username">
         <br>
         <button id="clickMeBtn" disabled>CLICK ME!</button>
@@ -101,4 +107,3 @@
     </script>
 </body>
 </html>
-
