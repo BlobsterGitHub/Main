@@ -21,6 +21,12 @@
             padding: 40px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.5s ease;
+            opacity: 1;
         }
         input[type="text"] {
             padding: 10px;
@@ -62,11 +68,7 @@
             display: block;
         }
         #secondScreen {
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-        #secondScreen.show {
-            opacity: 1;
+            display: none;
         }
     </style>
 </head>
@@ -88,6 +90,7 @@
     <script>
         const discordUsernameInput = document.getElementById('discordUsername');
         const clickMeBtn = document.getElementById('clickMeBtn');
+        const firstScreen = document.getElementById('firstScreen');
         const secondScreen = document.getElementById('secondScreen');
 
         discordUsernameInput.addEventListener('input', function() {
@@ -107,11 +110,12 @@
             }
 
             // Hide the first screen
-            document.getElementById('firstScreen').classList.add('hidden');
+            firstScreen.style.opacity = 0;
             // Show the second screen
-            secondScreen.classList.add('show');
+            secondScreen.style.display = 'block';
         });
     </script>
 </body>
 </html>
+
 
