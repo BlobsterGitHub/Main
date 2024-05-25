@@ -51,4 +51,4 @@ async def fetch_database(ctx):
     await ctx.send(response)
 
 # Run the bot with your token
-bot.run('MTI0Mzg4NDgxNTY1NzIwNTg3MQ.GBChbO.fDhfJSQujzcB77UAlLaRj_ToH-FD43JEUIVtGU')
+bot.run('MTIzMzQ2MDc3NTYwODEyNzU0Mg.G0L0HN.6gKQlNybWGVxpXgPuYFjHH6FUqFzuKWiFFP6zc')
