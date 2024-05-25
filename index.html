@@ -113,9 +113,12 @@
             firstScreen.style.opacity = 0;
             // Show the second screen
             secondScreen.style.display = 'block';
+
+            // Smoothly center the second screen
+            secondScreen.style.top = '50%';
+            secondScreen.style.left = '50%';
+            secondScreen.style.transform = 'translate(-50%, -50%)';
         });
     </script>
 </body>
 </html>
-
-
