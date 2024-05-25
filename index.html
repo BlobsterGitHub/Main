@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Main Page...</title>
+    <title>Blobster's Test Site</title>
     <style>
         body {
             display: flex;
@@ -61,8 +61,12 @@
             margin-bottom: 10px;
             display: block;
         }
-        .hidden {
-            display: none;
+        #secondScreen {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        #secondScreen.show {
+            opacity: 1;
         }
     </style>
 </head>
@@ -76,7 +80,7 @@
         <button id="clickMeBtn" disabled>CLICK ME!</button>
     </div>
 
-    <div class="container hidden" id="secondScreen">
+    <div class="container" id="secondScreen">
         <h1>Event Completed</h1>
         <p>Made by BlobsterWasHere on discord.</p>
     </div>
@@ -84,6 +88,7 @@
     <script>
         const discordUsernameInput = document.getElementById('discordUsername');
         const clickMeBtn = document.getElementById('clickMeBtn');
+        const secondScreen = document.getElementById('secondScreen');
 
         discordUsernameInput.addEventListener('input', function() {
             clickMeBtn.disabled = !discordUsernameInput.value.trim();
@@ -104,8 +109,9 @@
             // Hide the first screen
             document.getElementById('firstScreen').classList.add('hidden');
             // Show the second screen
-            document.getElementById('secondScreen').classList.remove('hidden');
+            secondScreen.classList.add('show');
         });
     </script>
 </body>
 </html>
+
