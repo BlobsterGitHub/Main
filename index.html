@@ -38,7 +38,7 @@
             border-radius: 5px;
             width: calc(100% - 22px);
         }
-        #clickMeBtn {
+        #clickMeBtn, .nextBtn {
             padding: 20px 40px;
             font-size: 24px;
             color: white;
@@ -47,14 +47,14 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        #clickMeBtn:disabled {
+        #clickMeBtn:disabled, .nextBtn:disabled {
             background-color: grey;
             cursor: not-allowed;
         }
-        #clickMeBtn:hover:enabled {
+        #clickMeBtn:hover:enabled, .nextBtn:hover:enabled {
             background-color: darkgreen;
         }
-        #clickMeBtn.shake {
+        #clickMeBtn.shake, .nextBtn.shake {
             animation: shake 0.5s ease;
         }
         @keyframes shake {
@@ -69,7 +69,7 @@
             margin-bottom: 10px;
             display: block;
         }
-        #secondScreen {
+        #secondScreen, .quizScreen {
             display: none;
         }
     </style>
@@ -84,6 +84,30 @@
         <button id="clickMeBtn" disabled>START QUIZ!</button>
     </div>
 
+    <div class="container quizScreen" id="quizScreen1">
+        <h1>Quiz Question 1</h1>
+        <p>What is your favorite color?</p>
+        <input type="text" id="answer1" placeholder="Enter your answer">
+        <br>
+        <button class="nextBtn" disabled>Next</button>
+    </div>
+
+    <div class="container quizScreen" id="quizScreen2">
+        <h1>Quiz Question 2</h1>
+        <p>What is your favorite animal?</p>
+        <input type="text" id="answer2" placeholder="Enter your answer">
+        <br>
+        <button class="nextBtn" disabled>Next</button>
+    </div>
+
+    <div class="container quizScreen" id="quizScreen3">
+        <h1>Quiz Question 3</h1>
+        <p>What is your favorite food?</p>
+        <input type="text" id="answer3" placeholder="Enter your answer">
+        <br>
+        <button class="nextBtn" disabled>Next</button>
+    </div>
+
     <div class="container" id="secondScreen">
         <h1>ERROR 404 - QUIZ FAILDE TO LOAD</h1>
         <p>Made by BlobsterWasHere on discord.</p>
@@ -96,14 +120,36 @@
             const clickMeBtn = document.getElementById('clickMeBtn');
             const firstScreen = document.getElementById('firstScreen');
             const secondScreen = document.getElementById('secondScreen');
+            const quizScreens = document.querySelectorAll('.quizScreen');
+            let currentQuizScreen = 0;
 
             discordUsernameInput.addEventListener('input', () => {
-                clickMeBtn.disabled = !discordUsernameInput.value.trim();
+                const value = discordUsernameInput.value.trim();
+                clickMeBtn.disabled = !value || value.includes(' ');
             });
+
+            const enableNextButton = (inputId, button) => {
+                const input = document.getElementById(inputId);
+                input.addEventListener('input', () => {
+                    button.disabled = !input.value.trim();
+                });
+            };
+
+            const showNextScreen = () => {
+                if (currentQuizScreen < quizScreens.length) {
+                    quizScreens[currentQuizScreen].style.display = 'none';
+                    currentQuizScreen++;
+                    if (currentQuizScreen < quizScreens.length) {
+                        quizScreens[currentQuizScreen].style.display = 'block';
+                    } else {
+                        secondScreen.style.display = 'block';
+                    }
+                }
+            };
 
             clickMeBtn.addEventListener('click', () => {
                 const discordUsername = discordUsernameInput.value.trim();
-                if (!discordUsername) {
+                if (!discordUsername || discordUsername.includes(' ')) {
                     clickMeBtn.classList.add('shake');
                     setTimeout(() => clickMeBtn.classList.remove('shake'), 500);
                     return;
@@ -131,12 +177,15 @@
                             throw new Error('Failed to send webhook request');
                         }
                         firstScreen.style.opacity = 0;
-                        secondScreen.style.display = 'block';
-                        secondScreen.style.top = '50%';
-                        secondScreen.style.left = '50%';
-                        secondScreen.style.transform = 'translate(-50%, -50%)';
+                        quizScreens[currentQuizScreen].style.display = 'block';
                     })
                     .catch(error => console.error('ERROR', error));
+            });
+
+            const nextButtons = document.querySelectorAll('.nextBtn');
+            nextButtons.forEach((button, index) => {
+                enableNextButton(`answer${index + 1}`, button);
+                button.addEventListener('click', showNextScreen);
             });
         });
     </script>
