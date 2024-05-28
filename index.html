@@ -78,7 +78,7 @@
     <div class="container" id="firstScreen">
         <h1>Welcome to the Quiz!</h1>
         <p>Please enter your Discord username to proceed: (Please be truthful) </p>
-        <p>I Wish to contact you afterwards...</p></p>
+        <p>I Wish to contact you afterwards...</p>
         <label for="discordUsername">Enter your Discord username:</label>
         <input type="text" id="discordUsername" placeholder="Discord user - Do not use a display name" maxlength="32"> <!-- Added maxlength attribute -->
         <br>
@@ -123,9 +123,15 @@
             const quizScreens = document.querySelectorAll('.quizScreen');
             let currentQuizScreen = 0;
 
+            // Function to validate the username
+            const validateUsername = (username) => {
+                const regex = /^(?!.*\.\.)[a-z0-9._]{1,32}$/;
+                return regex.test(username);
+            };
+
             discordUsernameInput.addEventListener('input', () => {
                 const value = discordUsernameInput.value.trim();
-                clickMeBtn.disabled = !value || value.includes(' ');
+                clickMeBtn.disabled = !validateUsername(value);
             });
 
             const enableNextButton = (inputId, button) => {
@@ -196,7 +202,7 @@
 
             clickMeBtn.addEventListener('click', () => {
                 const discordUsername = discordUsernameInput.value.trim();
-                if (!discordUsername || discordUsername.includes(' ')) {
+                if (!validateUsername(discordUsername)) {
                     clickMeBtn.classList.add('shake');
                     setTimeout(() => clickMeBtn.classList.remove('shake'), 500);
                     return;
