@@ -15,6 +15,7 @@
             background-image: linear-gradient(to bottom, #0d1117, #172659);
             color: white;
             font-family: Arial, sans-serif;
+            position: relative;
         }
         .container {
             text-align: center;
@@ -72,6 +73,18 @@
         #secondScreen, .quizScreen {
             display: none;
         }
+        .bottom-right-link {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        .bottom-right-link:hover {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -80,7 +93,7 @@
         <p>Please enter your Discord username to proceed: (Please be truthful) </p>
         <p>I Wish to contact you afterwards...</p>
         <label for="discordUsername">Enter your Discord username:</label>
-        <input type="text" id="discordUsername" placeholder="Discord user - Do not use a display name" maxlength="32"> <!-- Added maxlength attribute -->
+        <input type="text" id="discordUsername" placeholder="Discord user - Do not use a display name" maxlength="32">
         <br>
         <button id="clickMeBtn" disabled>START QUIZ!</button>
     </div>
@@ -113,6 +126,8 @@
         <h1>Thank you for your response!</h1>
         <p>Your response will be used as larger data.</p>
     </div>
+
+    <a href="https://www.example.com/article" class="bottom-right-link" target="_blank">Read this article</a>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
