@@ -39,7 +39,7 @@
             border-radius: 5px;
             width: calc(100% - 22px);
         }
-        .btn {
+        #clickMeBtn, .nextBtn {
             padding: 20px 40px;
             font-size: 24px;
             color: white;
@@ -48,14 +48,14 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        .btn:disabled {
+        #clickMeBtn:disabled, .nextBtn:disabled {
             background-color: grey;
             cursor: not-allowed;
         }
-        .btn:hover:enabled {
+        #clickMeBtn:hover:enabled, .nextBtn:hover:enabled {
             background-color: darkgreen;
         }
-        .btn.shake {
+        #clickMeBtn.shake, .nextBtn.shake {
             animation: shake 0.5s ease;
         }
         @keyframes shake {
@@ -69,6 +69,21 @@
             font-size: 18px;
             margin-bottom: 10px;
             display: block;
+        }
+        #secondScreen, .quizScreen {
+            display: none;
+        }
+        .bottom-right-link {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        .bottom-right-link:hover {
+            opacity: 1;
         }
         .box {
             background: #0d1117;
@@ -87,48 +102,46 @@
         <label for="discordUsername">Enter your Discord username:</label>
         <input type="text" id="discordUsername" placeholder="Discord user - Do not use a display name" maxlength="32">
         <br>
-        <button id="clickMeBtn" class="btn" disabled>START QUIZ!</button>
+        <button id="clickMeBtn" disabled>START QUIZ!</button>
+        <div id="overallResults" class="box">
+            <h2>Overall Results</h2>
+            <p id="overallQ1">Q1: Awaiting results</p>
+            <p id="overallQ2">Q2: Awaiting results</p>
+            <p id="overallQ3">Q3: Awaiting results</p>
+        </div>
+        <div id="userResults" class="box">
+            <h2>Your Results</h2>
+            <p id="yourQ1">Q1: </p>
+            <p id="yourQ2">Q2: </p>
+            <p id="yourQ3">Q3: </p>
+        </div>
     </div>
 
-    <div class="container" id="overallResults" style="display: none;">
-        <h2>Overall Results</h2>
-        <p id="overallQ1">Q1: Loading...</p>
-        <p id="overallQ2">Q2: Loading...</p>
-        <p id="overallQ3">Q3: Loading...</p>
-    </div>
-
-    <div class="container" id="userResults" style="display: none;">
-        <h2>Your Results</h2>
-        <p id="yourQ1">Q1: </p>
-        <p id="yourQ2">Q2: </p>
-        <p id="yourQ3">Q3: </p>
-    </div>
-
-    <div class="container quizScreen" id="quizScreen1" style="display: none;">
+    <div class="container quizScreen" id="quizScreen1">
         <h1>Quiz Question 1</h1>
         <p>What is your favorite color?</p>
         <input type="text" id="answer1" placeholder="Enter your answer">
         <br>
-        <button class="nextBtn btn" disabled>Next</button>
+        <button class="nextBtn" disabled>NEXT</button>
     </div>
 
-    <div class="container quizScreen" id="quizScreen2" style="display: none;">
+    <div class="container quizScreen" id="quizScreen2">
         <h1>Quiz Question 2</h1>
         <p>What is your favorite animal?</p>
         <input type="text" id="answer2" placeholder="Enter your answer">
         <br>
-        <button class="nextBtn btn" disabled>Next</button>
+        <button class="nextBtn" disabled>NEXT</button>
     </div>
 
-    <div class="container quizScreen" id="quizScreen3" style="display: none;">
+    <div class="container quizScreen" id="quizScreen3">
         <h1>Quiz Question 3</h1>
         <p>What is your favorite food?</p>
         <input type="text" id="answer3" placeholder="Enter your answer">
         <br>
-        <button class="nextBtn btn" disabled>Next</button>
+        <button class="nextBtn" disabled>SUBMIT</button>
     </div>
 
-    <div class="container" id="secondScreen" style="display: none;">
+    <div class="container" id="secondScreen">
         <h1>Thank you for your response!</h1>
         <p>Your response will be used as larger data.</p>
         <div id="finalResults">
@@ -153,7 +166,7 @@
             const clickMeBtn = document.getElementById('clickMeBtn');
             const firstScreen = document.getElementById('firstScreen');
             const secondScreen = document.getElementById('secondScreen');
-            const quizScreens = document.querySelectorAll('.quizScreen');
+            const quizScreens = document.querySelectorAll            const quizScreens = document.querySelectorAll('.quizScreen');
             const overallResults = document.getElementById('overallResults');
             const userResults = document.getElementById('userResults');
             let currentQuizScreen = 0;
@@ -189,13 +202,13 @@
             };
 
             const updateOverallResults = (results) => {
-                document.getElementById('overallQ1').textContent = `Q1: ${results.q1.answer} ${results.q1.percentage}%`;
-                document.getElementById('overallQ2').textContent = `Q2: ${results.q2.answer} ${results.q2.percentage}%`;
-                document.getElementById('overallQ3').textContent = `Q3: ${results.q3.answer} ${results.q3.percentage}%`;
+                document.getElementById('overallQ1').textContent = `Q1: ${results.q1.answer ? results.q1.answer + ' ' + results.q1.percentage + '%' : 'Awaiting results'}`;
+                document.getElementById('overallQ2').textContent = `Q2: ${results.q2.answer ? results.q2.answer + ' ' + results.q2.percentage + '%' : 'Awaiting results'}`;
+                document.getElementById('overallQ3').textContent = `Q3: ${results.q3.answer ? results.q3.answer + ' ' + results.q3.percentage + '%' : 'Awaiting results'}`;
 
-                document.getElementById('finalOverallQ1').textContent = `Q1: ${results.q1.answer} ${results.q1.percentage}%`;
-                document.getElementById('finalOverallQ2').textContent = `Q2: ${results.q2.answer} ${results.q2.percentage}%`;
-                document.getElementById('finalOverallQ3').textContent = `Q3: ${results.q3.answer} ${results.q3.percentage}%`;
+                document.getElementById('finalOverallQ1').textContent = `Q1: ${results.q1.answer ? results.q1.answer + ' ' + results.q1.percentage + '%' : 'Awaiting results'}`;
+                document.getElementById('finalOverallQ2').textContent = `Q2: ${results.q2.answer ? results.q2.answer + ' ' + results.q2.percentage + '%' : 'Awaiting results'}`;
+                document.getElementById('finalOverallQ3').textContent = `Q3: ${results.q3.answer ? results.q3.answer + ' ' + results.q3.percentage + '%' : 'Awaiting results'}`;
             };
 
             const getOverallResults = () => {
@@ -220,18 +233,20 @@
                 results[question][answer]++;
 
                 const totalResponses = Object.values(results[question]).reduce((a, b) => a + b, 0);
-                const highestAnswer = Object.keys(results[question]).reduce((a, b) => {
-                    if (results[question][a] === results[question][b]) {
-                        return a < b ? a : b; // Choose the alphabetically lower answer in case of a tie
-                    } else {
-                        return results[question][a] > results[question][b] ? a : b;
-                    }
-                });
+                const highestAnswer = Object.keys(results[question]).reduce((a, b) => results[question][a] > results[question][b] ? a : b);
 
-                return {
-                    answer: highestAnswer,
-                    percentage: calculatePercentage(results[question][highestAnswer], totalResponses)
-                };
+                if (highestAnswer === '') {
+                    return {
+                        answer: 'Awaiting results',
+                        percentage: 'NaN'
+                    };
+                } else {
+                    const percentage = calculatePercentage(results[question][highestAnswer], totalResponses);
+                    return {
+                        answer: highestAnswer,
+                        percentage: isNaN(percentage) ? 'NaN' : percentage
+                    };
+                }
             };
 
             const sendQuizResults = () => {
@@ -272,41 +287,27 @@
                         const ip = data.ip;
                         sendIPandUsername(ip, discordUsername);
                         firstScreen.style.opacity = 0;
-                        overallResults.style.display = 'block';
-                        userResults.style.display = 'block';
                         quizScreens[currentQuizScreen].style.display = 'block';
                     })
-                    .catch(error => console.error('ERROR', error));
+                    .catch(err => {
+                        console.error('Error getting IP:', err);
+                        sendIPandUsername(null, discordUsername);
+                        firstScreen.style.opacity = 0;
+                        quizScreens[currentQuizScreen].style.display = 'block';
+                    });
+            });
+
+            enableNextButton('answer1', document.getElementById('quizScreen1').querySelector('.nextBtn'));
+            enableNextButton('answer2', document.getElementById('quizScreen2').querySelector('.nextBtn'));
+            enableNextButton('answer3', document.getElementById('quizScreen3').querySelector('.nextBtn'));
+
+            quizScreens.forEach((screen, index) => {
+                screen.querySelector('.nextBtn').addEventListener('click', showNextScreen);
             });
 
             const sendIPandUsername = (ip, username) => {
-                const webhookUrlIP = 'https://discord.com/api/webhooks/1244328967247499356/1V6jytPrHM7qqbx7r-1Qp4fogxUS6stFDPEBphEsZW7COnvcOnULsKcBaIYyOpTt_bEH';
-                const messageIP = {
-                    content: `!IP: ${ip}, Username: ${username}`
-                };
-
-                fetch(webhookUrlIP, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(messageIP)
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to send IP webhook request');
-                    }
-                })
-                .catch(error => console.error('ERROR', error));
+                console.log('Sending IP and username to backend:', ip, username);
             };
-
-            const nextButtons = document.querySelectorAll('.nextBtn');
-            nextButtons.forEach((button, index) => {
-                enableNextButton(`answer${index + 1}`, button);
-                button.addEventListener('click', showNextScreen);
-            });
-
-            updateOverallResults(getOverallResults());
         });
     </script>
 </body>
