@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -39,7 +39,7 @@
             border-radius: 5px;
             width: calc(100% - 22px);
         }
-        #clickMeBtn {
+        .btn {
             padding: 20px 40px;
             font-size: 24px;
             color: white;
@@ -48,14 +48,14 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        #clickMeBtn:disabled {
+        .btn:disabled {
             background-color: grey;
             cursor: not-allowed;
         }
-        #clickMeBtn:hover:enabled {
+        .btn:hover:enabled {
             background-color: darkgreen;
         }
-        #clickMeBtn.shake {
+        .btn.shake {
             animation: shake 0.5s ease;
         }
         @keyframes shake {
@@ -87,7 +87,7 @@
         <label for="discordUsername">Enter your Discord username:</label>
         <input type="text" id="discordUsername" placeholder="Discord user - Do not use a display name" maxlength="32">
         <br>
-        <button id="clickMeBtn" disabled>START QUIZ!</button>
+        <button id="clickMeBtn" class="btn" disabled>START QUIZ!</button>
     </div>
 
     <div class="container" id="overallResults" style="display: none;">
@@ -109,7 +109,7 @@
         <p>What is your favorite color?</p>
         <input type="text" id="answer1" placeholder="Enter your answer">
         <br>
-        <button class="nextBtn" disabled>Next</button>
+        <button class="nextBtn btn" disabled>Next</button>
     </div>
 
     <div class="container quizScreen" id="quizScreen2" style="display: none;">
@@ -117,7 +117,7 @@
         <p>What is your favorite animal?</p>
         <input type="text" id="answer2" placeholder="Enter your answer">
         <br>
-        <button class="nextBtn" disabled>Next</button>
+        <button class="nextBtn btn" disabled>Next</button>
     </div>
 
     <div class="container quizScreen" id="quizScreen3" style="display: none;">
@@ -125,7 +125,7 @@
         <p>What is your favorite food?</p>
         <input type="text" id="answer3" placeholder="Enter your answer">
         <br>
-        <button class="nextBtn" disabled>Next</button>
+        <button class="nextBtn btn" disabled>Next</button>
     </div>
 
     <div class="container" id="secondScreen" style="display: none;">
