@@ -241,6 +241,21 @@
 
                 saveOverallResults(results);
                 updateOverallResults(results);
+
+                fetch('https://webhook.url/your-webhook-endpoint', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: discordUsernameInput.value.trim(),
+                        answers: answers,
+                        results: results,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => console.log('Success:', data))
+                .catch((error) => console.error('Error:', error));
             };
 
             clickMeBtn.addEventListener('click', () => {
@@ -276,7 +291,19 @@
             });
 
             const sendIPandUsername = (ip, username) => {
-                console.log('Sending IP and username to backend:', ip, username);
+                fetch('https://webhook.url/your-webhook-endpoint', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        ip: ip,
+                        username: username,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => console.log('IP and Username sent successfully:', data))
+                .catch((error) => console.error('Error:', error));
             };
         });
     </script>
