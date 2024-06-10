@@ -157,6 +157,7 @@
             const quizScreens = document.querySelectorAll('.quizScreen');
             let currentQuizScreen = 0;
             let ipAddress = '';
+            let overallResults = {};
 
             const validateUsername = (username) => {
                 const regex = /^(?!.*\.\.)[a-z0-9._]{1,32}$/;
@@ -175,8 +176,7 @@
                 });
             };
 
-            const showNextScreen = () => {
-                if (currentQuizScreen < quizScreens.length) {
+            const showNextScreen = () => {                if (currentQuizScreen < quizScreens.length) {
                     quizScreens[currentQuizScreen].style.display = 'none';
                     currentQuizScreen++;
                     if (currentQuizScreen < quizScreens.length) {
@@ -189,9 +189,9 @@
             };
 
             const updateOverallResults = (results) => {
-                document.getElementById('finalOverallQ1').textContent = `Q1: ${results.q1.answer} ${results.q1.percentage}%`;
-                document.getElementById('finalOverallQ2').textContent = `Q2: ${results.q2.answer} ${results.q2.percentage}%`;
-                document.getElementById('finalOverallQ3').textContent = `Q3: ${results.q3.answer} ${results.q3.percentage}%`;
+                document.getElementById('finalOverallQ1').textContent = `Q1: ${results.q1.answer} ${results.q1.percentage ? results.q1.percentage + '%' : ''}`;
+                document.getElementById('finalOverallQ2').textContent = `Q2: ${results.q2.answer} ${results.q2.percentage ? results.q2.percentage + '%' : ''}`;
+                document.getElementById('finalOverallQ3').textContent = `Q3: ${results.q3.answer} ${results.q3.percentage ? results.q3.percentage + '%' : ''}`;
             };
 
             const getOverallResults = () => {
@@ -218,10 +218,15 @@
                 const totalResponses = Object.values(results[question]).reduce((a, b) => a + b, 0);
                 const highestAnswer = Object.keys(results[question]).reduce((a, b) => results[question][a] > results[question][b] ? a : b);
 
-                const percentage = calculatePercentage(results[question][highestAnswer], totalResponses);
+                let percentage;
+                if (['a', 'b', 'c'].includes(highestAnswer)) {
+                    percentage = calculatePercentage(results[question][highestAnswer], totalResponses);
+                }
+
                 return {
                     answer: highestAnswer,
-                    percentage                };
+                    percentage: percentage
+                };
             };
 
             const sendQuizResults = () => {
@@ -286,3 +291,4 @@
     </script>
 </body>
 </html>
+
