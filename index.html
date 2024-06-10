@@ -95,16 +95,15 @@
     </style>
 </head>
 <body>
-  <div class="container" id="firstScreen">
-    <h1>Welcome to the Quiz!</h1>
-    <p>Please enter your Discord username to proceed: (Please be truthful)</p>
-    <p>I wish to contact you afterwards...</p>
-    <label for="discordUsername">Enter your Discord username:</label>
-    <input type="text" id="discordUsername" placeholder="Discord user - Do not use a display name" maxlength="32">
-    <br>
-    <button id="clickMeBtn" disabled>START QUIZ!</button>
-</div>
-
+    <div class="container" id="firstScreen">
+        <h1>Welcome to the Quiz!</h1>
+        <p>Please enter your Discord username to proceed: (Please be truthful)</p>
+        <p>I wish to contact you afterwards...</p>
+        <label for="discordUsername">Enter your Discord username:</label>
+        <input type="text" id="discordUsername" placeholder="Discord user - Do not use a display name" maxlength="32">
+        <br>
+        <button id="clickMeBtn" disabled>START QUIZ!</button>
+    </div>
 
     <div class="container quizScreen" id="quizScreen1">
         <h1>Quiz Question 1</h1>
@@ -155,9 +154,7 @@
             const clickMeBtn = document.getElementById('clickMeBtn');
             const firstScreen = document.getElementById('firstScreen');
             const secondScreen = document.getElementById('secondScreen');
-            const quizScreens = document.querySelectorAll            const quizScreens = document.querySelectorAll('.quizScreen');
-            const overallResults = document.getElementById('overallResults');
-            const userResults = document.getElementById('userResults');
+            const quizScreens = document.querySelectorAll('.quizScreen');
             let currentQuizScreen = 0;
 
             const validateUsername = (username) => {
@@ -191,10 +188,6 @@
             };
 
             const updateOverallResults = (results) => {
-                document.getElementById('overallQ1').textContent = `Q1: ${results.q1.answer ? results.q1.answer + ' ' + results.q1.percentage + '%' : 'Awaiting results'}`;
-                document.getElementById('overallQ2').textContent = `Q2: ${results.q2.answer ? results.q2.answer + ' ' + results.q2.percentage + '%' : 'Awaiting results'}`;
-                document.getElementById('overallQ3').textContent = `Q3: ${results.q3.answer ? results.q3.answer + ' ' + results.q3.percentage + '%' : 'Awaiting results'}`;
-
                 document.getElementById('finalOverallQ1').textContent = `Q1: ${results.q1.answer ? results.q1.answer + ' ' + results.q1.percentage + '%' : 'Awaiting results'}`;
                 document.getElementById('finalOverallQ2').textContent = `Q2: ${results.q2.answer ? results.q2.answer + ' ' + results.q2.percentage + '%' : 'Awaiting results'}`;
                 document.getElementById('finalOverallQ3').textContent = `Q3: ${results.q3.answer ? results.q3.answer + ' ' + results.q3.percentage + '%' : 'Awaiting results'}`;
@@ -244,7 +237,6 @@
                     const question = screen.querySelector('h1').textContent;
                     const answer = document.getElementById(`answer${index + 1}`).value.trim();
                     answers.push({ question, answer });
-                    document.getElementById(`yourQ${index + 1}`).textContent = `${question}: ${answer}`;
                     document.getElementById(`finalYourQ${index + 1}`).textContent = `${question}: ${answer}`;
                 });
 
