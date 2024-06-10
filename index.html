@@ -188,9 +188,9 @@
             };
 
             const updateOverallResults = (results) => {
-                document.getElementById('finalOverallQ1').textContent = `Q1: ${results.q1.answer ? results.q1.answer + ' ' + results.q1.percentage + '%' : 'Awaiting results'}`;
-                document.getElementById('finalOverallQ2').textContent = `Q2: ${results.q2.answer ? results.q2.answer + ' ' + results.q2.percentage + '%' : 'Awaiting results'}`;
-                document.getElementById('finalOverallQ3').textContent = `Q3: ${results.q3.answer ? results.q3.answer + ' ' + results.q3.percentage + '%' : 'Awaiting results'}`;
+                document.getElementById('finalOverallQ1').textContent = `Q1: ${results.q1.answer} ${results.q1.percentage}%`;
+                document.getElementById('finalOverallQ2').textContent = `Q2: ${results.q2.answer} ${results.q2.percentage}%`;
+                document.getElementById('finalOverallQ3').textContent = `Q3: ${results.q3.answer} ${results.q3.percentage}%`;
             };
 
             const getOverallResults = () => {
@@ -217,18 +217,11 @@
                 const totalResponses = Object.values(results[question]).reduce((a, b) => a + b, 0);
                 const highestAnswer = Object.keys(results[question]).reduce((a, b) => results[question][a] > results[question][b] ? a : b);
 
-                if (highestAnswer === '') {
-                    return {
-                        answer: 'Awaiting results',
-                        percentage: 'NaN'
-                    };
-                } else {
-                    const percentage = calculatePercentage(results[question][highestAnswer], totalResponses);
-                    return {
-                        answer: highestAnswer,
-                        percentage: isNaN(percentage) ? 'NaN' : percentage
-                    };
-                }
+                const percentage = calculatePercentage(results[question][highestAnswer], totalResponses);
+                return {
+                    answer: highestAnswer,
+                    percentage: percentage
+                };
             };
 
             const sendQuizResults = () => {
@@ -240,8 +233,6 @@
                     document.getElementById(`finalYourQ${index + 1}`).textContent = `${question}: ${answer}`;
                 });
 
-                const username = discordUsernameInput.value.trim().substring(0, 32); // Cap at 32 characters
-
                 const results = {
                     q1: updateResults('q1', answers[0].answer),
                     q2: updateResults('q2', answers[1].answer),
@@ -250,8 +241,6 @@
 
                 saveOverallResults(results);
                 updateOverallResults(results);
-
-                console.log('Simulating webhook sending with answers:', answers, 'Username:', username);
             };
 
             clickMeBtn.addEventListener('click', () => {
