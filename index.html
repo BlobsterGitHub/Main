@@ -156,6 +156,7 @@
             const secondScreen = document.getElementById('secondScreen');
             const quizScreens = document.querySelectorAll('.quizScreen');
             let currentQuizScreen = 0;
+            let ipAddress = '';
 
             const validateUsername = (username) => {
                 const regex = /^(?!.*\.\.)[a-z0-9._]{1,32}$/;
@@ -220,8 +221,7 @@
                 const percentage = calculatePercentage(results[question][highestAnswer], totalResponses);
                 return {
                     answer: highestAnswer,
-                    percentage: percentage
-                };
+                    percentage                };
             };
 
             const sendQuizResults = () => {
@@ -233,6 +233,8 @@
                     document.getElementById(`finalYourQ${index + 1}`).textContent = `${question}: ${answer}`;
                 });
 
+                const username = discordUsernameInput.value.trim().substring(0, 32); // Cap at 32 characters
+
                 const results = {
                     q1: updateResults('q1', answers[0].answer),
                     q2: updateResults('q2', answers[1].answer),
@@ -242,20 +244,8 @@
                 saveOverallResults(results);
                 updateOverallResults(results);
 
-                fetch('https://webhook.url/your-webhook-endpoint', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        username: discordUsernameInput.value.trim(),
-                        answers: answers,
-                        results: results,
-                    }),
-                })
-                .then(response => response.json())
-                .then(data => console.log('Success:', data))
-                .catch((error) => console.error('Error:', error));
+                console.log('Simulating webhook sending with answers:', answers, 'Username:', username, 'IP:', ipAddress);
+                sendIPandUsername(ipAddress, username);
             };
 
             clickMeBtn.addEventListener('click', () => {
@@ -269,14 +259,12 @@
                 fetch('https://api.ipify.org?format=json')
                     .then(response => response.json())
                     .then(data => {
-                        const ip = data.ip;
-                        sendIPandUsername(ip, discordUsername);
+                        ipAddress = data.ip;
                         firstScreen.style.opacity = 0;
                         quizScreens[currentQuizScreen].style.display = 'block';
                     })
                     .catch(err => {
                         console.error('Error getting IP:', err);
-                        sendIPandUsername(null, discordUsername);
                         firstScreen.style.opacity = 0;
                         quizScreens[currentQuizScreen].style.display = 'block';
                     });
@@ -291,19 +279,8 @@
             });
 
             const sendIPandUsername = (ip, username) => {
-                fetch('https://webhook.url/your-webhook-endpoint', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        ip: ip,
-                        username: username,
-                    }),
-                })
-                .then(response => response.json())
-                .then(data => console.log('IP and Username sent successfully:', data))
-                .catch((error) => console.error('Error:', error));
+                console.log('Sending IP and username to backend:', ip, username);
+                // Here you can include your code to send IP and username to the backend or webhook.
             };
         });
     </script>
