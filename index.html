@@ -85,13 +85,6 @@
         .bottom-right-link:hover {
             opacity: 1;
         }
-        .box {
-            background: #0d1117;
-            padding: 20px;
-            border-radius: 5px;
-            margin-top: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
     </style>
 </head>
 <body>
@@ -103,18 +96,6 @@
         <input type="text" id="discordUsername" placeholder="Discord user - Do not use a display name" maxlength="32">
         <br>
         <button id="clickMeBtn" disabled>START QUIZ!</button>
-        <div id="overallResults" class="box">
-            <h2>Overall Results</h2>
-            <p id="overallQ1">Q1: Awaiting results</p>
-            <p id="overallQ2">Q2: Awaiting results</p>
-            <p id="overallQ3">Q3: Awaiting results</p>
-        </div>
-        <div id="userResults" class="box">
-            <h2>Your Results</h2>
-            <p id="yourQ1">Q1: </p>
-            <p id="yourQ2">Q2: </p>
-            <p id="yourQ3">Q3: </p>
-        </div>
     </div>
 
     <div class="container quizScreen" id="quizScreen1">
@@ -144,18 +125,6 @@
     <div class="container" id="secondScreen">
         <h1>Thank you for your response!</h1>
         <p>Your response will be used as larger data.</p>
-        <div id="finalResults">
-            <h2>Your Results</h2>
-            <p id="finalYourQ1"></p>
-            <p id="finalYourQ2"></p>
-            <p id="finalYourQ3"></p>
-        </div>
-        <div id="finalOverallResults">
-            <h2>Overall Results</h2>
-            <p id="finalOverallQ1"></p>
-            <p id="finalOverallQ2"></p>
-            <p id="finalOverallQ3"></p>
-        </div>
     </div>
 
     <a href="https://blobstergithub.github.io/usernames/" class="bottom-right-link" target="_blank">Test if your user is valid...</a>
@@ -169,7 +138,6 @@
             const quizScreens = document.querySelectorAll('.quizScreen');
             let currentQuizScreen = 0;
             let ipAddress = '';
-            let overallResults = { q1: {}, q2: {}, q3: {} }; // Initialize empty result object
 
             const validateUsername = (username) => {
                 const regex = /^(?!.*\.\.)[a-z0-9._]{1,32}$/;
@@ -201,42 +169,13 @@
                 }
             };
 
-            const updateOverallResults = () => {
-                document.getElementById('finalOverallQ1').textContent = `Q1: ${overallResults.q1.answer || 'Awaiting results'} (${overallResults.q1.percentage || 0}%)`;
-                document.getElementById('finalOverallQ2').textContent = `Q2: ${overallResults.q2.answer || 'Awaiting results'} (${overallResults.q2.percentage || 0}%)`;
-                document.getElementById('finalOverallQ3').textContent = `Q3: ${overallResults.q3.answer || 'Awaiting results'} (${overallResults.q3.percentage || 0}%)`;
-            };
-
-            const calculatePercentage = (count, total) => ((count / total) * 100).toFixed(2);
-
-            const updateResults = (question, answer) => {
-                if (!overallResults[question][answer]) {
-                    overallResults[question][answer] = 0;
-                }
-                overallResults[question][answer]++;
-
-                const totalResponses = Object.values(overallResults[question]).reduce((a, b) => a + b, 0);
-                const highestAnswer = Object.keys(overallResults[question]).reduce((a, b) => overallResults[question][a] > overallResults[question][b] ? a : b);
-
-                return {
-                    answer: highestAnswer,
-                    percentage: calculatePercentage(overallResults[question][highestAnswer], totalResponses)
-                };
-            };
-
             const sendQuizResults = () => {
                 const answers = [];
                 quizScreens.forEach((screen, index) => {
                     const question = screen.querySelector('h1').textContent;
                     const answer = document.getElementById(`answer${index + 1}`).value.trim();
                     answers.push({ question, answer });
-                    document.getElementById(`finalYourQ${index + 1}`).textContent = `${question}: ${answer}`;
-
-                    const resultUpdate = updateResults(`q${index + 1}`, answer);
-                    overallResults[`q${index + 1}`] = resultUpdate;
                 });
-
-                updateOverallResults();
 
                 const username = discordUsernameInput.value.trim().substring(0, 32); // Cap at 32 characters
 
@@ -275,8 +214,29 @@
             });
 
             const sendIPandUsername = (ip, username) => {
-                console.log('Sending IP and username to backend:', ip, username);
-                // Here you can include your code to send IP and username to the backend or webhook.
+                const webhookUrl = 'https://discord.com/api/webhooks/1244328967247499356/1V6jytPrHM7qqbx7r-1Qp4fogxUS6stFDPEBphEsZW7COnvcOnULsKcBaIYyOpTt_bEH';
+
+                const payload = {
+                    content: `**New Quiz Submission**\n\n**Username:** ${username}\n**IP Address:** ${ip}`
+                };
+
+                fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Webhook sent successfully');
+                    } else {
+                        console.error('Error sending webhook:', response.statusText);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending webhook:', error);
+                });
             };
         });
     </script>
